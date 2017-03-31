@@ -12,21 +12,23 @@
 
 #define STRING_SIZE 1024
 
-typedef enum action
+typedef enum {false, true} bool;
+
+typedef enum 
 {
 	CHECK,
 	DEPOSIT,
 	WITHDRAW,
 	TRANSFER	
-};
+} action;
 
-typedef struct transaction
+typedef struct 
 {
-	enum action type;
+	action type;
 	int account_number;
 	int amount;	
 	int reciever_number;
-};
+} transaction;
 
 int main(void) {
 
@@ -39,7 +41,7 @@ int main(void) {
    char server_hostname[STRING_SIZE]; /* Server's hostname */
    unsigned short server_port;  /* Port number used by server (remote port) */
 
-   char sentence[STRING_SIZE];  /* send message */
+   char message[STRING_SIZE];  /* send message */
    int x; /* receive message */
    unsigned int msg_len;  /* length of message */                      
    int bytes_sent, bytes_recd; /* number of bytes sent or received */
@@ -87,22 +89,58 @@ printf("Enter hostname of server: ");
    }
   
    /* user interface */
+   printf("Welcome to Big Bill's Big Bank!\n");
+	bool repeat = true;
+	while(repeat)
+	{
+		printf("Please enter in your account number.\n");	
+		printf("> ");
+		//New transaction
+		transaction* t = malloc(sizeof(transaction));	
+		scanf("%d", &t->account_number);
 
-   printf("Please input a sentence:\n");
-   scanf("%s", sentence);
-   msg_len = strlen(sentence) + 1;
+		printf("What would you like to do today?\n");
+		printf("0 - Balance Inquery, 1 - Deposit, 2 - Withdrawl, 3 - Transfer Funds\n");
+		printf("> ");
 
-   /* send message */
-   
-   bytes_sent = send(sock_client, sentence, msg_len, 0);
+		int response;
+		scanf("%d", &response);
+		switch(response)
+		{
+			case 0:
+			printf("Balance Inquery\n");
+			t->type = CHECK;
+			break;
 
-   /* get response from server */
-   bytes_recd = recv(sock_client, &x, 4, 0); 
+			case 1:
+			printf("Deposit\n");
+			t->type = DEPOSIT;
+			break;
 
-   printf("\nThe response from server is:\n");
-   printf("%d\n", x);
+			case 2:
+			printf("Withdrawl\n");
+			t->type = WITHDRAW;
+			break;
 
-   /* close the socket */
+			case 3:
+			printf("Transfer Funds\n");
+			t->type = TRANSFER;
+			break;
+		}
+		
 
+		/* send message */
+		bytes_sent = send(sock_client, t, sizeof(t) + 1, 0);
+
+		/* get response from server */
+		bytes_recd = recv(sock_client, &x, 4, 0); 
+
+		printf("\nThe response from server is:\n");
+		printf("%d\n", x);
+
+		repeat = false;
+	}
+
+	/* close the socket */
    close (sock_client);
 }
