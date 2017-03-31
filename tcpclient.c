@@ -24,11 +24,30 @@ typedef enum
 
 typedef struct 
 {
-	action type;
+	action transaction_type;
+	int account_type;
 	int account_number;
 	int amount;	
-	int reciever_number;
+	int receiver_number;
 } transaction;
+
+
+void print_transaction(transaction* t)
+{
+	printf("\n\n----------------------------------------------\n");
+	printf("TRANSACTION RECEIPT\n");
+	printf("Account Number : %d\n", t->account_number);
+	printf("Account Type : %d\n", t->account_type);
+	printf("Transaction Type : %d\n", t->transaction_type);
+	printf("Amount : %d\n", t->amount);
+	printf("Receiver Number : %d\n", t->receiver_number);
+	printf("----------------------------------------------\n");
+}
+
+void print_separator()
+{
+	printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+}
 
 int main(void) {
 
@@ -89,7 +108,9 @@ printf("Enter hostname of server: ");
    }
   
    /* user interface */
+	print_separator();
    printf("Welcome to Big Bill's Big Bank!\n");
+	print_separator();
 	bool repeat = true;
 	while(repeat)
 	{
@@ -99,8 +120,13 @@ printf("Enter hostname of server: ");
 		transaction* t = malloc(sizeof(transaction));	
 		scanf("%d", &t->account_number);
 
+		printf("Please enter in your account type.\n");	
+		printf("0 - Savings, 1 - Checking\n");	
+		printf("> ");
+		scanf("%d", &t->account_type);
+
 		printf("What would you like to do today?\n");
-		printf("0 - Balance Inquery, 1 - Deposit, 2 - Withdrawl, 3 - Transfer Funds\n");
+		printf("0 - Balance Inquiry, 1 - Deposit, 2 - Withdrawl, 3 - Transfer Funds\n");
 		printf("> ");
 
 		int response;
@@ -108,27 +134,28 @@ printf("Enter hostname of server: ");
 		switch(response)
 		{
 			case 0:
-			printf("Balance Inquery\n");
-			t->type = CHECK;
+			t->transaction_type = CHECK;
 			break;
 
 			case 1:
-			printf("Deposit\n");
-			t->type = DEPOSIT;
+			t->transaction_type = DEPOSIT;
 			break;
 
 			case 2:
-			printf("Withdrawl\n");
-			t->type = WITHDRAW;
+			t->transaction_type = WITHDRAW;
 			break;
 
 			case 3:
-			printf("Transfer Funds\n");
-			t->type = TRANSFER;
+			t->transaction_type = TRANSFER;
 			break;
 		}
 		
-
+		t->amount = 0;
+		t->receiver_number = 0;
+		
+		//DEBUG
+		print_transaction(t);
+		
 		/* send message */
 		bytes_sent = send(sock_client, t, sizeof(t) + 1, 0);
 
@@ -138,7 +165,15 @@ printf("Enter hostname of server: ");
 		printf("\nThe response from server is:\n");
 		printf("%d\n", x);
 
-		repeat = false;
+		printf("Anything else you need to do today? (Y/N)\n");
+		printf("> ");
+		char y_n;
+		scanf("\n%s", &y_n);
+		repeat = y_n == 'Y';
+
+		if(!repeat)
+			printf("Goodbye!\n");
+		print_separator();
 	}
 
 	/* close the socket */
