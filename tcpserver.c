@@ -49,7 +49,10 @@ int main(void) {
    int bytes_sent, bytes_recd; /* number of bytes sent or received */
    unsigned int i;  /* temporary loop variable */
    struct userAccount *checkAct;
-//checkAct = malloc(sizeof(checkAct));
+   checkAct = malloc(sizeof(checkAct));
+   checkAct->accountNumber=1;
+   checkAct->balance=0;
+   checkAct->type=1;
    /* open a socket */
 
    if ((sock_server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
