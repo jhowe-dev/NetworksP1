@@ -12,6 +12,22 @@
 
 #define STRING_SIZE 1024
 
+typedef enum action
+{
+	CHECK,
+	DEPOSIT,
+	WITHDRAW,
+	TRANSFER	
+};
+
+typedef struct transaction
+{
+	enum action type;
+	int account_number;
+	int amount;	
+	int reciever_number;
+};
+
 int main(void) {
 
    int sock_client;  /* Socket used by client */
@@ -43,8 +59,7 @@ int main(void) {
             already been bound. */
 
    /* initialize server address information */
-
-   printf("Enter hostname of server: ");
+printf("Enter hostname of server: ");
    scanf("%s", server_hostname);
    if ((server_hp = gethostbyname(server_hostname)) == NULL) {
       perror("Client: invalid server hostname");
