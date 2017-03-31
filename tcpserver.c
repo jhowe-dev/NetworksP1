@@ -48,11 +48,18 @@ int main(void) {
    unsigned int msg_len;  /* length of message */
    int bytes_sent, bytes_recd; /* number of bytes sent or received */
    unsigned int i;  /* temporary loop variable */
+
    struct userAccount *checkAct;
    checkAct = malloc(sizeof(checkAct));
    checkAct->accountNumber=1;
    checkAct->balance=0;
    checkAct->type=1;
+   
+   struct userAccount *saveAct;
+   saveAct = malloc(sizeof(saveAct));
+   saveAct->accountNumber=2;
+   saveAct->balance=0;
+   saveAct->type=0;
    /* open a socket */
 
    if ((sock_server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
