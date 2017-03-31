@@ -22,11 +22,11 @@
 //			  balance: Amount in whole dollars in the account.
 //            type: Flag that marks checking or savings (1 = checking, 0=saving)
 //Uses:  Used to keep track of accounts
-typedef struct userAccount {
+   struct userAccount {
 	int accountNumber;
 	int balance;
 	int type;
-};
+   };
 
 
 int main(void) {
@@ -48,8 +48,8 @@ int main(void) {
    unsigned int msg_len;  /* length of message */
    int bytes_sent, bytes_recd; /* number of bytes sent or received */
    unsigned int i;  /* temporary loop variable */
-   userAccount *checkAct;
-   checkAct = malloc(sizeof(userAccount));
+   struct userAccount *checkAct;
+//checkAct = malloc(sizeof(checkAct));
    /* open a socket */
 
    if ((sock_server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
