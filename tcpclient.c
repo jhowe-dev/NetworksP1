@@ -34,7 +34,7 @@ typedef struct
 
 void print_transaction(transaction* t)
 {
-	printf("\n\n----------------------------------------------\n");
+	printf("\n----------------------------------------------\n");
 	printf("TRANSACTION RECEIPT\n");
 	printf("Account Number : %d\n", t->account_number);
 	printf("Account Type : %d\n", t->account_type);
@@ -134,36 +134,52 @@ printf("Enter hostname of server: ");
 		switch(response)
 		{
 			case 0:
-			t->transaction_type = CHECK;
+				t->transaction_type = CHECK;
 			break;
 
 			case 1:
-			t->transaction_type = DEPOSIT;
+				t->transaction_type = DEPOSIT;
+				printf("How much would you like to deposit?\n");
+				printf("> $");
+				scanf("%d", &t->amount);
 			break;
 
 			case 2:
-			t->transaction_type = WITHDRAW;
+				t->transaction_type = WITHDRAW;
+				do
+				{
+					printf("How much would you like to withdraw? (Increments of $20)\n");
+					printf("> $");
+					scanf("%d", &t->amount);
+				} while(t->amount % 20 != 0);
 			break;
 
 			case 3:
-			t->transaction_type = TRANSFER;
+				t->transaction_type = TRANSFER;
+				printf("Enter in the account number that will receive funds.\n");
+				printf("> ");
+				scanf("%d", &t->receiver_number);
+
+				printf("How much would you like to transfer?\n");
+				printf("> $");
+				scanf("%d", &t->amount);
 			break;
 		}
 		
-		t->amount = 0;
-		t->receiver_number = 0;
-		
+		printf("\nSubmitting Transaction...\n");
 		//DEBUG
 		print_transaction(t);
-		
+
 		/* send message */
 		bytes_sent = send(sock_client, t, sizeof(t) + 1, 0);
+		printf("Number of Bytes Sent : %d bytes\n", sizeof(t));
 
 		/* get response from server */
 		bytes_recd = recv(sock_client, &x, 4, 0); 
 
 		printf("\nThe response from server is:\n");
 		printf("%d\n", x);
+		printf("Number of Bytes Received : %d bytes\n\n", sizeof(x));
 
 		printf("Anything else you need to do today? (Y/N)\n");
 		printf("> ");
@@ -173,6 +189,7 @@ printf("Enter hostname of server: ");
 
 		if(!repeat)
 			printf("Goodbye!\n");
+
 		print_separator();
 	}
 
