@@ -17,14 +17,7 @@
    number to prevent conflicts with others in the class. */
 
 #define SERV_TCP_PORT 65001
-typedef struct
-{
-	//place holder, will enumerate later TODO
-	int error_type;
-	account_type act_type;
-	int initial_balance;
-	int post_balance;
-}server_response;
+
 
 //Enum: account_type
 //Types: Checking -> denotes a checking account.  Savings -> denotes a savings account
@@ -34,6 +27,18 @@ typedef enum
 	CHECKING,
 	SAVINGS
 } account_type;
+
+
+
+//TODO document me
+typedef struct
+{
+	//place holder, will enumerate later TODO
+	int error_type;
+	account_type act_type;
+	int initial_balance;
+	int post_balance;
+}server_response;
 
 //Struct: userAccount
 //Attributes: account number: Unique, integer identifier for the account.
@@ -69,17 +74,15 @@ int main(void) {
    unsigned int i;  /* temporary loop variable */
 
    /*Create 2 accounts initialized to $0.  #'s 1,2*/
-   struct user_account *check_act;
-   check_act = malloc(sizeof(check_act));
-   check_act->account_number=1;
-   check_act->balance=0;
-   check_act->type=1;
+   user_account check_act;
+   check_act.account_number=1;
+   check_act.balance=0;
+   check_act.type=CHECKING;
    
-   struct user_account *save_act;
-   save_act = malloc(sizeof(save_act));
-   save_act->accountNumber=2;
-   save-act->balance=0;
-   save_act->type = SAVINGS;
+   user_account save_act;
+   save_act.account_number=2;
+   save_act.balance=0;
+   save_act.type = SAVINGS;
    
    /* open a socket */
 
