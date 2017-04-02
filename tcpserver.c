@@ -17,16 +17,35 @@
    number to prevent conflicts with others in the class. */
 
 #define SERV_TCP_PORT 65001
+typedef struct
+{
+	//place holder, will enumerate later TODO
+	int error_type;
+	account_type act_type;
+	int initial_balance;
+	int post_balance;
+}server_response;
+
+//Enum: account_type
+//Types: Checking -> denotes a checking account.  Savings -> denotes a savings account
+//Uses: Track type of account in user_account struct
+typedef enum
+{
+	CHECKING,
+	SAVINGS
+} account_type;
+
 //Struct: userAccount
 //Attributes: account number: Unique, integer identifier for the account.
 //			  balance: Amount in whole dollars in the account.
 //            type: Flag that marks checking or savings (1 = checking, 0=saving)
 //Uses:  Used to keep track of accounts
-   struct userAccount {
-	int accountNumber;
+typedef struct
+{
+	int account_number;
 	int balance;
-	int type;
-   };
+	account_type type;
+}user_account;
 
 
 int main(void) {
@@ -49,17 +68,19 @@ int main(void) {
    int bytes_sent, bytes_recd; /* number of bytes sent or received */
    unsigned int i;  /* temporary loop variable */
 
-   struct userAccount *checkAct;
-   checkAct = malloc(sizeof(checkAct));
-   checkAct->accountNumber=1;
-   checkAct->balance=0;
-   checkAct->type=1;
+   /*Create 2 accounts initialized to $0.  #'s 1,2*/
+   struct user_account *check_act;
+   check_act = malloc(sizeof(check_act));
+   check_act->account_number=1;
+   check_act->balance=0;
+   check_act->type=1;
    
-   struct userAccount *saveAct;
-   saveAct = malloc(sizeof(saveAct));
-   saveAct->accountNumber=2;
-   saveAct->balance=0;
-   saveAct->type=0;
+   struct user_account *save_act;
+   save_act = malloc(sizeof(save_act));
+   save_act->accountNumber=2;
+   save-act->balance=0;
+   save_act->type = SAVINGS;
+   
    /* open a socket */
 
    if ((sock_server = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
