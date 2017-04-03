@@ -9,6 +9,7 @@
 #include <sys/socket.h>     /* for socket, bind, listen, accept */
 #include <netinet/in.h>     /* for sockaddr_in */
 #include <unistd.h>         /* for close */
+#include "account_structs.h"/* for structures to be shared between client and server*/
 
 #define STRING_SIZE 1024   
 
@@ -18,7 +19,7 @@
 
 #define SERV_TCP_PORT 65001
 
-
+/*
 //Enum: account_type
 //Types: Checking -> denotes a checking account.  Savings -> denotes a savings account
 //Uses: Track type of account in user_account struct
@@ -27,9 +28,9 @@ typedef enum
 	CHECKING,
 	SAVINGS
 } account_type;
+*/
 
-
-
+/*
 //TODO document me
 typedef struct
 {
@@ -39,7 +40,7 @@ typedef struct
 	int initial_balance;
 	int post_balance;
 }server_response;
-
+*/
 //Struct: userAccount
 //Attributes: account number: Unique, integer identifier for the account.
 //			  balance: Amount in whole dollars in the account.
