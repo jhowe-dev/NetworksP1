@@ -9,9 +9,9 @@
 #include <sys/socket.h>     /* for socket, connect, send, and recv */
 #include <netinet/in.h>     /* for sockaddr_in */
 #include <unistd.h>         /* for close */
-
+#include "account_structs.h"/* for structures shared between client and server*/
 #define STRING_SIZE 1024
-
+/*
 typedef enum {false, true} bool;
 
 typedef enum 
@@ -30,7 +30,7 @@ typedef struct
 	int amount;	
 	int receiver_number;
 } transaction;
-
+*/
 
 void print_transaction(transaction* t)
 {
