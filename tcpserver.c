@@ -18,34 +18,12 @@
    number to prevent conflicts with others in the class. */
 
 #define SERV_TCP_PORT 65001
-
 /*
-//Enum: account_type
-//Types: Checking -> denotes a checking account.  Savings -> denotes a savings account
-//Uses: Track type of account in user_account struct
-typedef enum
-{
-	CHECKING,
-	SAVINGS
-} account_type;
-*/
-
-/*
-//TODO document me
-typedef struct
-{
-	//place holder, will enumerate later TODO
-	int error_type;
-	account_type act_type;
-	int initial_balance;
-	int post_balance;
-}server_response;
-*/
-//Struct: userAccount
-//Attributes: account number: Unique, integer identifier for the account.
-//			  balance: Amount in whole dollars in the account.
-//            type: Flag that marks checking or savings (1 = checking, 0=saving)
-//Uses:  Used to keep track of accounts
+ * Struct: user_account
+ * Fields: Account Number->Integer number representing the account identifier
+ *		   Balance->Integer number representing the whole-number-amount in the account
+ *		   account_type->Enumeration of account types.  Either Checking or savings
+ * */
 typedef struct
 {
 	int account_number;
