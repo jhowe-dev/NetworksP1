@@ -1,8 +1,8 @@
 CC= /usr/bin/gcc
 all:	hfile tcpclient tcpserver udpclient udpserver nonblock-udpclient
 
-hfile: account_structs.h;
-	${CC} account_structs.h -o account_structs
+hfile: utility.h;
+	${CC} utility.h -o utility
 
 tcpclient: tcpclient.c;
 	${CC} tcpclient.c -o tcpclient
@@ -20,4 +20,4 @@ nonblock-udpclient:	nonblock-udpclient.c;
 	$(CC) nonblock-udpclient.c -o nonblock-udpclient
 
 clean:
-	rm tcpclient tcpserver udpclient udpserver nonblock-udpclient account_structs
+	rm tcpclient tcpserver udpclient udpserver nonblock-udpclient utility

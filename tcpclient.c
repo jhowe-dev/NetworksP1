@@ -9,45 +9,8 @@
 #include <sys/socket.h>     /* for socket, connect, send, and recv */
 #include <netinet/in.h>     /* for sockaddr_in */
 #include <unistd.h>         /* for close */
-#include "account_structs.h"/* for structures shared between client and server*/
+#include "utility.h"/* for structures shared between client and server*/
 #define STRING_SIZE 1024
-/*
-typedef enum {false, true} bool;
-
-typedef enum 
-{
-	CHECK,
-	DEPOSIT,
-	WITHDRAW,
-	TRANSFER	
-} action;
-
-typedef struct 
-{
-	action transaction_type;
-	int account_type;
-	int account_number;
-	int amount;	
-	int receiver_number;
-} transaction;
-*/
-
-void print_transaction(transaction* t)
-{
-	printf("\n----------------------------------------------\n");
-	printf("TRANSACTION RECEIPT\n");
-	printf("Account Number : %d\n", t->account_number);
-	printf("Account Type : %d\n", t->account_type);
-	printf("Transaction Type : %d\n", t->transaction_type);
-	printf("Amount : %d\n", t->amount);
-	printf("Receiver Number : %d\n", t->receiver_number);
-	printf("----------------------------------------------\n");
-}
-
-void print_separator()
-{
-	printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
-}
 
 int main(void) {
 
@@ -60,7 +23,7 @@ int main(void) {
    char server_hostname[STRING_SIZE]; /* Server's hostname */
    unsigned short server_port;  /* Port number used by server (remote port) */
 
-   char message[STRING_SIZE];  /* send message */
+   int transaction[NUM_VALUES_TRANSACTION];  /* send message */
    int x; /* receive message */
    unsigned int msg_len;  /* length of message */                      
    int bytes_sent, bytes_recd; /* number of bytes sent or received */
@@ -106,7 +69,7 @@ printf("Enter hostname of server: ");
       close(sock_client);
       exit(1);
    }
-  
+
    /* user interface */
 	print_separator();
    printf("Welcome to Big Bill's Big Bank!\n");
@@ -116,15 +79,19 @@ printf("Enter hostname of server: ");
 	{
 		printf("Please enter in your account number.\n");	
 		printf("> ");
-		//New transaction
-		transaction* t = malloc(sizeof(transaction));	
-		scanf("%d", &t->account_number);
+		scanf("%d", &transaction[T_ACCOUNT_NUMBER_INDEX]);
 
-		printf("Please enter in your account type.\n");	
-		printf("0 - Savings, 1 - Checking\n");	
-		printf("> ");
-		scanf("%d", &t->account_type);
+		//Get the account type
+		do
+		{
+			printf("Please enter in your account type.\n");	
+			printf("0 - Savings, 1 - Checking\n");	
+			printf("> ");
+			scanf("%d", &transaction[T_ACCOUNT_TYPE_INDEX]);
+		}
+		while(!(transaction[T_ACCOUNT_TYPE_INDEX] == 0 || transaction[T_ACCOUNT_TYPE_INDEX] == 1));
 
+		//Get the type of transaction
 		printf("What would you like to do today?\n");
 		printf("0 - Balance Inquiry, 1 - Deposit, 2 - Withdrawl, 3 - Transfer Funds\n");
 		printf("> ");
@@ -134,45 +101,45 @@ printf("Enter hostname of server: ");
 		switch(response)
 		{
 			case 0:
-				t->transaction_type = CHECK;
+				transaction[TRANSACTION_TYPE_INDEX] = CHECK;
 			break;
 
 			case 1:
-				t->transaction_type = DEPOSIT;
+				transaction[TRANSACTION_TYPE_INDEX] = DEPOSIT;
 				printf("How much would you like to deposit?\n");
 				printf("> $");
-				scanf("%d", &t->amount);
+				scanf("%d", &transaction[T_AMOUNT_INDEX]);
 			break;
 
 			case 2:
-				t->transaction_type = WITHDRAW;
+				transaction[TRANSACTION_TYPE_INDEX] = WITHDRAW;
 				do
 				{
 					printf("How much would you like to withdraw? (Increments of $20)\n");
 					printf("> $");
-					scanf("%d", &t->amount);
-				} while(t->amount % 20 != 0);
+					scanf("%d", &transaction[T_AMOUNT_INDEX]);
+				} while(transaction[T_AMOUNT_INDEX] % 20 != 0);
 			break;
 
 			case 3:
-				t->transaction_type = TRANSFER;
+				transaction[TRANSACTION_TYPE_INDEX] = TRANSFER;
 				printf("Enter in the account number that will receive funds.\n");
 				printf("> ");
-				scanf("%d", &t->receiver_number);
+				scanf("%d", &transaction[T_RECEIVER_NUMBER_INDEX]);
 
 				printf("How much would you like to transfer?\n");
 				printf("> $");
-				scanf("%d", &t->amount);
+				scanf("%d", &transaction[T_AMOUNT_INDEX]);
 			break;
 		}
 		
 		printf("\nSubmitting Transaction...\n");
-		//DEBUG
-		print_transaction(t);
+		print_transaction(transaction);
 
 		/* send message */
-		bytes_sent = send(sock_client, t, sizeof(t) + 1, 0);
-		printf("Number of Bytes Sent : %d bytes\n", sizeof(t));
+		int transaction_size = (NUM_VALUES_TRANSACTION * sizeof(int)) + 1;
+		bytes_sent = send(sock_client, transaction, transaction_size, 0);
+		printf("Number of Bytes Sent : %d bytes\n", transaction_size);
 
 		/* get response from server */
 		bytes_recd = recv(sock_client, &x, 4, 0); 

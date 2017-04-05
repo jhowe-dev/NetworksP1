@@ -9,7 +9,7 @@
 #include <sys/socket.h>     /* for socket, bind, listen, accept */
 #include <netinet/in.h>     /* for sockaddr_in */
 #include <unistd.h>         /* for close */
-#include "account_structs.h"/* for structures to be shared between client and server*/
+#include "utility.h"/* for structures to be shared between client and server*/
 
 #define STRING_SIZE 1024   
 
@@ -31,7 +31,6 @@ typedef struct
 	account_type type;
 }user_account;
 
-
 int main(void) {
 
    int sock_server;  /* Socket on which server listens to clients */
@@ -47,6 +46,7 @@ int main(void) {
    unsigned int client_addr_len;  /* Length of client address structure */
 
    char sentence[STRING_SIZE];  /* receive message */
+	int transaction[NUM_VALUES_TRANSACTION]; /* expected message */
    char modifiedSentence[STRING_SIZE]; /* send message */
    unsigned int msg_len;  /* length of message */
    int bytes_sent, bytes_recd; /* number of bytes sent or received */
@@ -115,26 +115,26 @@ int main(void) {
       }
  
       /* receive the message */
+		int transaction_size = (NUM_VALUES_TRANSACTION * sizeof(int)) + 1;
+      bytes_recd = recv(sock_connection, transaction, transaction_size, 0);
 
-      bytes_recd = recv(sock_connection, sentence, STRING_SIZE, 0);
+      if (bytes_recd > 0)
+		{
+         printf("Transaction Received:\n");
+			print_transaction(transaction);			
 
-      if (bytes_recd > 0){
-         printf("Received Request:\n");
-		 printf("Print me");
-		 int i = 100663296;
-		 int j = htonl(i);
-		 printf("%d\n",j); 
-	
-        /* prepare the message to send */
+			/*TODO Implement Account Logic*/
 
-         msg_len = bytes_recd;
 
-         /* send message */
-		          bytes_sent = send(sock_connection, &j, sizeof(j), 0);
+			/* prepare the message to send */
+			msg_len = bytes_recd;
+
+			int j = 1;
+			/* send message */
+			bytes_sent = send(sock_connection, &j, sizeof(j), 0);
       }
 
       /* close the socket */
-
       close(sock_connection);
    } 
 }
