@@ -45,19 +45,20 @@ int main(void) {
                                         stores client address */
    unsigned int client_addr_len;  /* Length of client address structure */
 
-   char sentence[STRING_SIZE];  /* receive message */
-	int transaction[NUM_VALUES_TRANSACTION]; /* expected message */
-   char modifiedSentence[STRING_SIZE]; /* send message */
+   int transaction[NUM_VALUES_TRANSACTION]; /* expected message */
+   int response_message[NUM_VALUES_RESPONSE]; /*message to send back*/
    unsigned int msg_len;  /* length of message */
    int bytes_sent, bytes_recd; /* number of bytes sent or received */
    unsigned int i;  /* temporary loop variable */
 
    /*Create 2 accounts initialized to $0.  #'s 1,2*/
+
+   //checking account
    user_account check_act;
    check_act.account_number=1;
    check_act.balance=0;
    check_act.type=CHECKING;
-   
+   //savings account
    user_account save_act;
    save_act.account_number=2;
    save_act.balance=0;
@@ -117,19 +118,35 @@ int main(void) {
       /* receive the message */
 	  int transaction_size = (NUM_VALUES_TRANSACTION * sizeof(int)) + 1;
       bytes_recd = recv(sock_connection, transaction, transaction_size, 0);
+	  
+	  /*prepare values to go in server response*/
+
+	  //Which error has been encountered (0 being no error)
 	  int error_code = 0;
-      if (bytes_recd > 0)
+	  //Account type that was accessed
+	  int response_account_type=SAVINGS;
+	  //Initial balance before any transaction is completed
+	  int response_initial_balance = 0;
+	  //Post balance -> balance after the transaction is complete (with or without error)
+	  int response_post_balance = 0;
+      
+	  if (bytes_recd > 0)
 		{
 
-         printf("Transaction Received of size: %d\n", transaction_size);
 		 print_transaction(transaction);			
-		 
-		 
-		 /*TODO Implement Account Logic*/
+		 printf("\n");
+         printf("Transaction Received of size: %d\n", transaction_size);
+		 printf("\n");
+		 /*Pull out relevant info from client message*/
+		 //what action to perform
 		 int action_type = transaction[TRANSACTION_TYPE_INDEX];
+		 //account number to perform on
 		 int account_number = transaction[T_ACCOUNT_NUMBER_INDEX];
-		 int rec_number = transaction[T_RECEIVER_NUMBER_INDEX];
+		 //receiver in the event of transfer
+		 int receiver_account_number = transaction[T_RECEIVER_NUMBER_INDEX];
+		 //amount to deposit/withdraw/transfer
 		 int amount = transaction[T_AMOUNT_INDEX];
+		 
 		 //Decide action based on action type!
 		 switch (action_type)
 		 {
@@ -139,21 +156,30 @@ int main(void) {
 						account_number);
 				if(account_number == 1)
 				{
+					response_account_type = CHECKING;
+
 					printf("Accessing Account 1\n");
+					//for readability in stdout
 					print_separator();
 					printf("You have: %d remaining in your account\n", check_act.balance);
+					//for readability in stdout
 					print_separator();
 				}//if accessing account 1
 				else if(account_number == 2)
 				{
+					response_account_type = SAVINGS;
+					
 					printf("Accessing Account 2 \n");
+					//for readability
 					print_separator();
 					printf("You have: %d remaining in your account\n", save_act.balance);
+					//for readability
 					print_separator();
 				}//else if accessing account 2
 				else
 				{
 					printf("Error code 1! Account :%d for Balance inquiry does not exist.\n", account_number);		
+					//No such account error
 					error_code = 1;
 				}//else save error code, no such account
 				break;
@@ -163,20 +189,34 @@ int main(void) {
 						account_number);
 				if(account_number == 1)
 				{
+					//save values for server response
+					response_account_type = CHECKING;
+					//initial value
+					response_initial_balance = check_act.balance;
+					
 					printf("Accessing Account 1\n");
 					print_separator();
 					
 					check_act.balance += amount;//Add the amount specified in the transaction to the account
-					
+				    //after depositing, save off the post balance for response	
+					response_post_balance = check_act.balance;
+					//notify user
 					printf("You now have: %d remaining in your account\n", check_act.balance);
 					print_separator();
 				}//if accessing account 1
 				
 				else if(account_number == 2)
 				{
+					//save off values for server response
+					response_account_type = SAVINGS;
+					//initial value
+					response_initial_balance = save_act.balance;
 					printf("Accessing Account 2 \n");
 					print_separator();
 					save_act.balance += amount;//Add the amount specified in the transaction to the account
+					//post value
+					response_post_balance = save_act.balance;
+					//notfiy user
 					printf("You have: %d remaining in your account\n", save_act.balance);
 					print_separator();
 				}//else if accessing account 2
@@ -184,6 +224,7 @@ int main(void) {
 				else
 				{
 					printf("Error code 1! Account :%d for deposit request does not exist.\n", account_number);		
+					//no such account error
 					error_code = 1;
 				}//else save error code, no such account
 				
@@ -194,36 +235,54 @@ int main(void) {
 					  account_number);
 				if(account_number == 1)
 				{
+					//save off response values
+					response_account_type = CHECKING;
+					//initial value
+					response_initial_balance = check_act.balance;
 					printf("Attempting to withdraw from account 1\n");
 					if(check_act.balance - amount < 0)
 					{
 						printf("Error code 3! I'm sorry, there are not enough funds in account %d to complete the withdrawal of %d\n",
 								account_number, amount);
+						//insufficient funds error
 						error_code = 3;
 					}//if insufficient funds error 3
 					else
 					{
-						printf("Withdrawing %d from account %d", amount, account_number);
+						printf("Withdrawing %d from account %d\n", amount, account_number);
 						check_act.balance -= amount;
-						printf("New balance is %d", check_act.balance);
+						//save post value
+						response_post_balance = check_act.balance;
+						//notfiy user
+						printf("New balance is %d\n", check_act.balance);
 					}//else withdraw amount	
 				}//if accessing account 1
 
 				else if(account_number == 2)
 				{
+					//save off response values
+					response_account_type = SAVINGS;
+					//initial value
+					response_initial_balance = save_act.balance;
+					printf("Attempting to withdraw from account 2\n");
 					if(save_act.balance - amount < 0)
 					{
 						printf("Error code 3! I'm sorry, there are not enough funds in account %d to complete the withdrawal of %d\n",
 								account_number, amount);
+						//insufficient funds error
 						error_code = 3;
 					}
 					else
 					{
 						printf("Withdrawing %d from account %d", amount, account_number);
+						//do the withdrawal
 						save_act.balance -= amount;
+						//save the post balance
+						response_post_balance = save_act.balance;
+						//notify customer
 						printf("New balance is %d", save_act.balance);
+						printf("Your new balance is now %d", save_act.balance);
 					}
-					printf("Attempting to withdraw from account 2");
 				}//else if accessing account 2	
 				
 				else{
@@ -235,7 +294,67 @@ int main(void) {
 			//Transfer
 			case 3:
 				printf("Transfer request received from account: %d to account %d\n",
-					  account_number, rec_number);	
+					  account_number, receiver_account_number);	
+				
+				if(account_number == 1)
+				{
+					//save response values
+					response_account_type = CHECKING;
+					response_initial_balance = check_act.balance;
+					if(check_act.balance - amount < 0)
+					{
+						printf("Error code 3! There are insufficient funds in account 1 to tranfer %d\n", amount);
+						error_code = 3;
+					}//if insufficient funds
+					else if(receiver_account_number != 2)
+					{
+						printf("Error code 4! Account: %d to transfer %d to does not exist\n", receiver_account_number, amount);
+						error_code = 4;
+					}//else if receiver does not exist
+					else
+					{
+						printf("Transferring %d to account %d\n", amount, receiver_account_number);
+						//take money from one account
+						check_act.balance -= amount;
+						//add money to other account
+						save_act.balance += amount;
+						//value after transferring
+						printf("New balances are-> Sender:%d , Receiver:%d\n", check_act.balance, save_act.balance);
+						response_post_balance = check_act.balance;
+					}//else transfer funds!
+				}//if transfer from account 1
+				else if(account_number == 2){
+				//save response values
+					response_account_type = SAVINGS;
+					response_initial_balance = save_act.balance;
+					if(save_act.balance - amount < 0)
+					{
+						printf("Error code 3! There are insufficient funds in account 2 to tranfer %d\n", amount);
+						error_code = 3;
+					}//if insufficient funds
+					else if(receiver_account_number != 1)
+					{
+						printf("Error code 4! Account: %d to transfer %d to does not exist\n", receiver_account_number, amount);
+						error_code = 4;
+					}//else if receiver does not exist
+					else
+					{
+						printf("Transferring %d to account %d\n", amount, receiver_account_number);
+						//take money from one account
+						save_act.balance -= amount;
+						//add money to other account
+						check_act.balance += amount;
+						//value after transferring
+						response_post_balance = save_act.balance;
+						printf("New balances are-> Sender:%d , Receiver:%d\n", save_act.balance, check_act.balance);
+					}//else transfer funds!
+				}//else if transfer from account 2
+				else
+				{
+					printf("Error code 1! Account %d does not exist\n", account_number);
+					error_code = 1;
+				}
+
 				break;
 			//Error if you got this far..
 			default:
