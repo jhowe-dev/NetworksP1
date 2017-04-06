@@ -17,7 +17,7 @@
    incoming requests from clients. You should change this to a different
    number to prevent conflicts with others in the class. */
 
-#define SERV_TCP_PORT 65001
+#define SERV_TCP_PORT 65002
 /*
  * Struct: user_account
  * Fields: Account Number->Integer number representing the account identifier
@@ -34,7 +34,7 @@ typedef struct
 int main(void) {
 
    int sock_server;  /* Socket on which server listens to clients */
-   int sock_connection;  /* Socket on which server exchanges data with client */
+   int sock_connection = 0;  /* Socket on which server exchanges data with client */
 
    struct sockaddr_in server_addr;  /* Internet address structure that
                                         stores server address */
@@ -47,6 +47,8 @@ int main(void) {
 
    int transaction[NUM_VALUES_TRANSACTION]; /* expected message */
    int response_message[NUM_VALUES_RESPONSE]; /*message to send back*/
+   int transaction_size = (NUM_VALUES_TRANSACTION * sizeof(int)) + 1; /*Size of the message expected*/
+
    unsigned int msg_len;  /* length of message */
    int bytes_sent, bytes_recd; /* number of bytes sent or received */
    unsigned int i;  /* temporary loop variable */
@@ -104,11 +106,12 @@ int main(void) {
    /* wait for incoming connection requests in an indefinite loop */
 
    for (;;) {
-
+	  if(sock_connection == 0){
       sock_connection = accept(sock_server, (struct sockaddr *) &client_addr, 
                                          &client_addr_len);
                      /* The accept function blocks the server until a
                         connection request comes from a client */
+	  }//if allows for persistent connection if already connected to client
       if (sock_connection < 0) {
          perror("Server: accept() error\n"); 
          close(sock_server);
@@ -116,8 +119,7 @@ int main(void) {
       }
  
       /* receive the message */
-	  int transaction_size = (NUM_VALUES_TRANSACTION * sizeof(int)) + 1;
-      bytes_recd = recv(sock_connection, transaction, transaction_size, 0);
+	  bytes_recd = recv(sock_connection, transaction, transaction_size, 0);
 	  
 	  /*prepare values to go in server response*/
 
@@ -366,7 +368,8 @@ int main(void) {
 			print_response(response_message);
       }
 
-      /* close the socket */
-      close(sock_connection);
-   } 
+    } 
+	/* close the socket */
+    close(sock_connection);
+
 }
