@@ -133,10 +133,13 @@ printf("Enter hostname of server: ");
 		int rec_size = (NUM_VALUES_RESPONSE * sizeof(int)) +1;
 		/* get response from server */
 		bytes_recd = recv(sock_client, &server_response, rec_size, 0); 
-
 		printf("\nThe response from server is:\n");
-		printf("%d\n", server_response[0]);
+		print_response(server_response);
 		printf("Number of Bytes Received : %d bytes\n\n", bytes_recd);
+
+		//Print any errors
+		if(server_response[ERROR_TYPE_INDEX] != 0)
+			print_error(server_response[ERROR_TYPE_INDEX], transaction);
 
 		printf("Anything else you need to do today? (Y/N)\n");
 		printf("> ");
@@ -144,7 +147,8 @@ printf("Enter hostname of server: ");
 		scanf("\n%s", &y_n);
 		repeat = y_n == 'Y';
 
-		if(!repeat){
+		if(!repeat)
+		{
 			printf("Goodbye!\n");
 			char goodbye[1];
 			goodbye[1] = 'g';

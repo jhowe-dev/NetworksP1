@@ -98,8 +98,50 @@ void print_response(int server_response[NUM_VALUES_RESPONSE])
 
 
 /*Error codes:
- * 1: Account does not exist -> specified number is not an existing account
- * 2: Invalid request -> Specified request is not one of 0(inquiry) 1(deposit) 2(withdraw) 3(transfer)
- * 3: Insufficient funds -> During a withdrawal or transfer, the account losing money does not have enough to complete transaction
- * 4: Receiver doesn't exist -> Account number specified for the receiver of a transfer does not exist
+ * ERR_ACCOUNT_NONEXIST: Account does not exist -> specified number is not an existing account
+ * ERR_INVALID_TRANSACTION: Invalid request -> Specified request is not one of 0(inquiry) 1(deposit) 2(withdraw) 3(transfer)
+ * ERR_INSUFFICIENT_FUNDS: Insufficient funds -> During a withdrawal or transfer, the account losing money does not have enough to complete transaction
+ * ERR_RECEIVER_NONEXIST: Receiver doesn't exist -> Account number specified for the receiver of a transfer does not exist
+ * ERR_WITHDRAW_SAVINGS: User tried to withdraw from savings account
  * */
+#define ERR_ACCOUNT_NONEXIST 1
+#define ERR_INVALID_TRANSACTION 2
+#define ERR_INSUFFICIENT_FUNDS 3
+#define ERR_RECEIVER_NONEXIST 4
+#define ERR_WITHDRAW_SAVINGS 5
+
+void print_error(int code, int transaction[NUM_VALUES_TRANSACTION])
+{
+	print_separator();
+	printf("There was an error in your transaction!\n");
+	printf("Error: ");
+	switch(code)
+	{
+		case ERR_ACCOUNT_NONEXIST:
+			printf("Account %d does not exist.", transaction[T_ACCOUNT_NUMBER_INDEX]);		
+		break;
+
+		case ERR_INVALID_TRANSACTION:
+			printf("I didn't understand your request. Please try again.");
+		break;
+
+		case ERR_INSUFFICIENT_FUNDS:
+			printf("There are insufficient funds in Account %d.", transaction[T_ACCOUNT_NUMBER_INDEX]);
+		break;
+
+		case ERR_RECEIVER_NONEXIST:
+			printf("Account %d does not exist.", transaction[T_RECEIVER_NUMBER_INDEX]);
+		break;
+
+		case ERR_WITHDRAW_SAVINGS:
+			printf("Account %d is a savings account. Funds cannot be moving from a savings account.", transaction[T_ACCOUNT_NUMBER_INDEX]);	
+		break;
+
+		default:
+			printf("Fatal error has occurred.");
+		break;
+	}
+	printf(" [ERROR CODE : %d]\n", code);
+	print_separator();
+}
+

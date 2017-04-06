@@ -189,9 +189,8 @@ int main(void) {
 				}//else if accessing account 2
 				else
 				{
-					printf("Error code 1! Account :%d for Balance inquiry does not exist.\n", account_number);		
 					//No such account error
-					error_code = 1;
+					error_code = ERR_ACCOUNT_NONEXIST;
 				}//else save error code, no such account
 				break;
 			//Deposit
@@ -234,9 +233,8 @@ int main(void) {
 				
 				else
 				{
-					printf("Error code 1! Account :%d for deposit request does not exist.\n", account_number);		
 					//no such account error
-					error_code = 1;
+					error_code = ERR_ACCOUNT_NONEXIST;
 				}//else save error code, no such account
 				
 				break;
@@ -253,10 +251,8 @@ int main(void) {
 					printf("Attempting to withdraw from account 1\n");
 					if(check_act.balance - amount < 0)
 					{
-						printf("Error code 3! I'm sorry, there are not enough funds in account %d to complete the withdrawal of %d\n",
-								account_number, amount);
 						//insufficient funds error
-						error_code = 3;
+						error_code = ERR_INSUFFICIENT_FUNDS;
 					}//if insufficient funds error 3
 					else
 					{
@@ -274,13 +270,10 @@ int main(void) {
 					//save off response values
 					response_account_type = SAVINGS;
 					//set error, no withdraw from savings
-					error_code = 5;
-					printf("I'm sorry, account %d is a savings account.  you may not withdraw from a savings account\n", account_number);	
-				}//else if accessing account 2	
-				
+					error_code = ERR_WITHDRAW_SAVINGS;
+				}
 				else{
-					printf("Error code 1! Account :%d for withdraw request does not exist.\n", account_number);		
-					error_code = 1;
+					error_code = ERR_ACCOUNT_NONEXIST;
 				}//else Error! no such account
 				
 				break;
@@ -297,13 +290,11 @@ int main(void) {
 					response_initial_balance = save_act.balance;
 					if(check_act.balance - amount < 0)
 					{
-						printf("Error code 3! There are insufficient funds in account 1 to tranfer %d\n", amount);
-						error_code = 3;
+						error_code = ERR_INSUFFICIENT_FUNDS;
 					}//if insufficient funds
 					else if(receiver_account_number != 2)
 					{
-						printf("Error code 4! Account: %d to transfer %d to does not exist\n", receiver_account_number, amount);
-						error_code = 4;
+						error_code = ERR_RECEIVER_NONEXIST;
 					}//else if receiver does not exist
 					else
 					{
@@ -324,13 +315,11 @@ int main(void) {
 					response_initial_balance = check_act.balance;
 					if(save_act.balance - amount < 0)
 					{
-						printf("Error code 3! There are insufficient funds in account 2 to tranfer %d\n", amount);
-						error_code = 3;
+						error_code = ERR_INSUFFICIENT_FUNDS;
 					}//if insufficient funds
 					else if(receiver_account_number != 1)
 					{
-						printf("Error code 4! Account: %d to transfer %d to does not exist\n", receiver_account_number, amount);
-						error_code = 4;
+						error_code = ERR_RECEIVER_NONEXIST;
 					}//else if receiver does not exist
 					else
 					{
@@ -346,15 +335,13 @@ int main(void) {
 				}//else if transfer from account 2
 				else
 				{
-					printf("Error code 1! Account %d does not exist\n", account_number);
-					error_code = 1;
+					error_code = ERR_ACCOUNT_NONEXIST;
 				}
 
 				break;
 			//Error if you got this far..
 			default:
-				printf("Error code 2! I didn't understand your request, please try again with a valid request.\n");
-				error_code = 2;
+				error_code = ERR_INVALID_TRANSACTION;
 				break;
 		 }
 
