@@ -262,27 +262,9 @@ int main(void) {
 				{
 					//save off response values
 					response_account_type = SAVINGS;
-					//initial value
-					response_initial_balance = save_act.balance;
-					printf("Attempting to withdraw from account 2\n");
-					if(save_act.balance - amount < 0)
-					{
-						printf("Error code 3! I'm sorry, there are not enough funds in account %d to complete the withdrawal of %d\n",
-								account_number, amount);
-						//insufficient funds error
-						error_code = 3;
-					}
-					else
-					{
-						printf("Withdrawing %d from account %d", amount, account_number);
-						//do the withdrawal
-						save_act.balance -= amount;
-						//save the post balance
-						response_post_balance = save_act.balance;
-						//notify customer
-						printf("New balance is %d", save_act.balance);
-						printf("Your new balance is now %d", save_act.balance);
-					}
+					//set error, no withdraw from savings
+					error_code = 5;
+					printf("I'm sorry, account %d is a savings account.  you may not withdraw from a savings account\n", account_number);	
 				}//else if accessing account 2	
 				
 				else{
@@ -299,8 +281,9 @@ int main(void) {
 				if(account_number == 1)
 				{
 					//save response values
-					response_account_type = CHECKING;
-					response_initial_balance = check_act.balance;
+					//only worry about account receiving money
+					response_account_type = SAVINGS;
+					response_initial_balance = save_act.balance;
 					if(check_act.balance - amount < 0)
 					{
 						printf("Error code 3! There are insufficient funds in account 1 to tranfer %d\n", amount);
@@ -320,13 +303,14 @@ int main(void) {
 						save_act.balance += amount;
 						//value after transferring
 						printf("New balances are-> Sender:%d , Receiver:%d\n", check_act.balance, save_act.balance);
-						response_post_balance = check_act.balance;
+						response_post_balance = save_act.balance;
 					}//else transfer funds!
 				}//if transfer from account 1
 				else if(account_number == 2){
 				//save response values
-					response_account_type = SAVINGS;
-					response_initial_balance = save_act.balance;
+				//only worry about account receiving money
+					response_account_type = CHECKING;
+					response_initial_balance = check_act.balance;
 					if(save_act.balance - amount < 0)
 					{
 						printf("Error code 3! There are insufficient funds in account 2 to tranfer %d\n", amount);
@@ -345,7 +329,7 @@ int main(void) {
 						//add money to other account
 						check_act.balance += amount;
 						//value after transferring
-						response_post_balance = save_act.balance;
+						response_post_balance = check_act.balance;
 						printf("New balances are-> Sender:%d , Receiver:%d\n", save_act.balance, check_act.balance);
 					}//else transfer funds!
 				}//else if transfer from account 2
@@ -377,6 +361,8 @@ int main(void) {
 	
 			/* send message */
 			bytes_sent = send(sock_connection, response_message, msg_len, 0);
+
+			printf("Sent response to client of size %d\n", bytes_sent);
       }
 
       /* close the socket */
