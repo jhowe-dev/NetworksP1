@@ -115,31 +115,134 @@ int main(void) {
       }
  
       /* receive the message */
-		int transaction_size = (NUM_VALUES_TRANSACTION * sizeof(int)) + 1;
+	  int transaction_size = (NUM_VALUES_TRANSACTION * sizeof(int)) + 1;
       bytes_recd = recv(sock_connection, transaction, transaction_size, 0);
-
+	  int error_code = 0;
       if (bytes_recd > 0)
 		{
-         printf("Transaction Received:\n");
+
+         printf("Transaction Received of size: %d\n", transaction_size);
 		 print_transaction(transaction);			
-		 //printf("%d\n", transaction[TRANSACTION_TYPE_INDEX]);
-			/*TODO Implement Account Logic*/
-		 int x = transaction[TRANSACTION_TYPE_INDEX];
-		 printf("%d\n",x);
-		 if(x == 0)
+		 
+		 
+		 /*TODO Implement Account Logic*/
+		 int action_type = transaction[TRANSACTION_TYPE_INDEX];
+		 int account_number = transaction[T_ACCOUNT_NUMBER_INDEX];
+		 int rec_number = transaction[T_RECEIVER_NUMBER_INDEX];
+		 int amount = transaction[T_AMOUNT_INDEX];
+		 //Decide action based on action type!
+		 switch (action_type)
 		 {
-			printf("Happy Now?");
-		 }
-		 switch (x)
-		 {
+			//Balance Inquiry
 			case 0:
-				printf("please Work");
+				printf("Balance Inquiry received for account: %d\n",
+						account_number);
+				if(account_number == 1)
+				{
+					printf("Accessing Account 1\n");
+					print_separator();
+					printf("You have: %d remaining in your account\n", check_act.balance);
+					print_separator();
+				}//if accessing account 1
+				else if(account_number == 2)
+				{
+					printf("Accessing Account 2 \n");
+					print_separator();
+					printf("You have: %d remaining in your account\n", save_act.balance);
+					print_separator();
+				}//else if accessing account 2
+				else
+				{
+					printf("Error code 1! Account :%d for Balance inquiry does not exist.\n", account_number);		
+					error_code = 1;
+				}//else save error code, no such account
 				break;
+			//Deposit
+			case 1:
+				printf("Deposit request received for account: %d\n",
+						account_number);
+				if(account_number == 1)
+				{
+					printf("Accessing Account 1\n");
+					print_separator();
+					
+					check_act.balance += amount;//Add the amount specified in the transaction to the account
+					
+					printf("You now have: %d remaining in your account\n", check_act.balance);
+					print_separator();
+				}//if accessing account 1
+				
+				else if(account_number == 2)
+				{
+					printf("Accessing Account 2 \n");
+					print_separator();
+					save_act.balance += amount;//Add the amount specified in the transaction to the account
+					printf("You have: %d remaining in your account\n", save_act.balance);
+					print_separator();
+				}//else if accessing account 2
+				
+				else
+				{
+					printf("Error code 1! Account :%d for deposit request does not exist.\n", account_number);		
+					error_code = 1;
+				}//else save error code, no such account
+				
+				break;
+			//Withdraw
+			case 2:
+				printf("Withdraw request received for account: %d\n",
+					  account_number);
+				if(account_number == 1)
+				{
+					printf("Attempting to withdraw from account 1\n");
+					if(check_act.balance - amount < 0)
+					{
+						printf("Error code 3! I'm sorry, there are not enough funds in account %d to complete the withdrawal of %d\n",
+								account_number, amount);
+						error_code = 3;
+					}//if insufficient funds error 3
+					else
+					{
+						printf("Withdrawing %d from account %d", amount, account_number);
+						check_act.balance -= amount;
+						printf("New balance is %d", check_act.balance);
+					}//else withdraw amount	
+				}//if accessing account 1
+
+				else if(account_number == 2)
+				{
+					if(save_act.balance - amount < 0)
+					{
+						printf("Error code 3! I'm sorry, there are not enough funds in account %d to complete the withdrawal of %d\n",
+								account_number, amount);
+						error_code = 3;
+					}
+					else
+					{
+						printf("Withdrawing %d from account %d", amount, account_number);
+						save_act.balance -= amount;
+						printf("New balance is %d", save_act.balance);
+					}
+					printf("Attempting to withdraw from account 2");
+				}//else if accessing account 2	
+				
+				else{
+					printf("Error code 1! Account :%d for withdraw request does not exist.\n", account_number);		
+					error_code = 1;
+				}//else Error! no such account
+				
+				break;
+			//Transfer
+			case 3:
+				printf("Transfer request received from account: %d to account %d\n",
+					  account_number, rec_number);	
+				break;
+			//Error if you got this far..
 			default:
-				printf("Dont be rude");
+				printf("Error code 2! I didn't understand your request, please try again with a valid request.\n");
+				error_code = 2;
 				break;
 		 }
-		 x = 1000;
 
 			/* prepare the message to send */
 			msg_len = bytes_recd;
