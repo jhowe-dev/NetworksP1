@@ -120,7 +120,13 @@ int main(void) {
  
       /* receive the message */
 	  bytes_recd = recv(sock_connection, transaction, transaction_size, 0);
-	  
+	  if(bytes_recd == 0)
+	  {
+		printf("No more connection...");
+		sock_connection = 0;
+		close(sock_connection);
+		continue;
+	  } 
 	  /*prepare values to go in server response*/
 
 	  //Which error has been encountered (0 being no error)
@@ -369,7 +375,5 @@ int main(void) {
       }
 
     } 
-	/* close the socket */
-    close(sock_connection);
-
+	
 }
