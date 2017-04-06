@@ -34,8 +34,8 @@ typedef struct
 int main(void) {
 
    int sock_server;  /* Socket on which server listens to clients */
-   int sock_connection = 0;  /* Socket on which server exchanges data with client */
-
+   int sock_connection;  /* Socket on which server exchanges data with client */
+   bool sock_flag = 0;//whether or not the client is sticking around
    struct sockaddr_in server_addr;  /* Internet address structure that
                                         stores server address */
    unsigned int server_addr_len;  /* Length of server address structure */
@@ -106,7 +106,7 @@ int main(void) {
    /* wait for incoming connection requests in an indefinite loop */
 
    for (;;) {
-	  if(sock_connection == 0){
+	  if(sock_flag == 0){
       sock_connection = accept(sock_server, (struct sockaddr *) &client_addr, 
                                          &client_addr_len);
                      /* The accept function blocks the server until a
@@ -120,13 +120,16 @@ int main(void) {
  
       /* receive the message */
 	  bytes_recd = recv(sock_connection, transaction, transaction_size, 0);
-	  if(bytes_recd == 0)
+	  if(bytes_recd == 1)
 	  {
-		printf("No more connection...");
-		sock_connection = 0;
+		printf("Client is disconnecting! Goodbye \n");
+		sock_flag = 0;
 		close(sock_connection);
 		continue;
 	  } 
+	  else{
+		sock_flag = 1;
+	  }
 	  /*prepare values to go in server response*/
 
 	  //Which error has been encountered (0 being no error)

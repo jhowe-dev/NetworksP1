@@ -144,12 +144,21 @@ printf("Enter hostname of server: ");
 		scanf("\n%s", &y_n);
 		repeat = y_n == 'Y';
 
-		if(!repeat)
+		if(!repeat){
 			printf("Goodbye!\n");
-
+			char goodbye[1];
+			goodbye[1] = 'g';
+			bytes_sent = send(sock_client, goodbye, sizeof(char), 0);
+		}
+		/*Set all values to 0's*/
+		transaction[0] = 0;
+		transaction[1] = 0;
+		transaction[2] = 0;
+		transaction[3] = 0;
+		transaction[4] = 0;
 		print_separator();
 	}
 
 	/* close the socket */
-   close (sock_client);
+   close(sock_client);
 }
