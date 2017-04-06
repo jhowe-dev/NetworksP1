@@ -121,10 +121,25 @@ int main(void) {
       if (bytes_recd > 0)
 		{
          printf("Transaction Received:\n");
-			print_transaction(transaction);			
-
+		 print_transaction(transaction);			
+		 //printf("%d\n", transaction[TRANSACTION_TYPE_INDEX]);
 			/*TODO Implement Account Logic*/
-
+		 int x = transaction[TRANSACTION_TYPE_INDEX];
+		 printf("%d\n",x);
+		 if(x == 0)
+		 {
+			printf("Happy Now?");
+		 }
+		 switch (x)
+		 {
+			case 0:
+				printf("please Work");
+				break;
+			default:
+				printf("Dont be rude");
+				break;
+		 }
+		 x = 1000;
 
 			/* prepare the message to send */
 			msg_len = bytes_recd;
