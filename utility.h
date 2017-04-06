@@ -41,7 +41,7 @@ typedef enum
 
 void print_separator()
 {
-	printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+	printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
 }
 
 /*
@@ -61,15 +61,13 @@ void print_separator()
 
 void print_transaction(int transaction[NUM_VALUES_TRANSACTION])
 {
-	printf("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+	print_separator();
 	printf("Transaction Type : %d\n", transaction[TRANSACTION_TYPE_INDEX]);	
 	printf("Account Number : %d\n", transaction[T_ACCOUNT_NUMBER_INDEX]);	
 	printf("Amount : %d\n", transaction[T_AMOUNT_INDEX]);	
 	printf("Receiver Account Number : %d\n", transaction[T_RECEIVER_NUMBER_INDEX]);	
-	printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+	print_separator();
 }
-
-
 
 /*
  * Int Array: server_response

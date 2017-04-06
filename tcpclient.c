@@ -127,10 +127,10 @@ printf("Enter hostname of server: ");
 		print_transaction(transaction);
 
 		/* send message */
-		int transaction_size = (NUM_VALUES_TRANSACTION * sizeof(int)) + 1;
+		int transaction_size = NUM_VALUES_TRANSACTION * sizeof(int);
 		bytes_sent = send(sock_client, transaction, transaction_size, 0);
 		printf("Number of Bytes Sent : %d bytes\n", transaction_size);
-		int rec_size = (NUM_VALUES_RESPONSE * sizeof(int)) +1;
+		int rec_size = NUM_VALUES_RESPONSE * sizeof(int);
 		/* get response from server */
 		bytes_recd = recv(sock_client, &server_response, rec_size, 0); 
 		printf("\nThe response from server is:\n");
@@ -145,7 +145,7 @@ printf("Enter hostname of server: ");
 		printf("> ");
 		char y_n;
 		scanf("\n%s", &y_n);
-		repeat = y_n == 'Y';
+		repeat = (y_n == 'Y') || (y_n == 'y');
 
 		if(!repeat)
 		{

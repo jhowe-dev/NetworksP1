@@ -47,7 +47,7 @@ int main(void) {
 
    int transaction[NUM_VALUES_TRANSACTION]; /* expected message */
    int response_message[NUM_VALUES_RESPONSE]; /*message to send back*/
-   int transaction_size = (NUM_VALUES_TRANSACTION * sizeof(int)) + 1; /*Size of the message expected*/
+   int transaction_size = NUM_VALUES_TRANSACTION * sizeof(int); /*Size of the message expected*/
 
    unsigned int msg_len;  /* length of message */
    int bytes_sent, bytes_recd; /* number of bytes sent or received */
@@ -122,9 +122,12 @@ int main(void) {
 	  bytes_recd = recv(sock_connection, transaction, transaction_size, 0);
 	  if(bytes_recd == 1)
 	  {
-		printf("Client is disconnecting! Goodbye \n");
+		print_separator();
+		printf("Client is disconnecting!\n");
 		sock_flag = 0;
 		close(sock_connection);
+		printf("Goodbye!\n");
+		print_separator();
 		continue;
 	  } 
 	  else{
@@ -145,9 +148,8 @@ int main(void) {
 		{
 
 		 print_transaction(transaction);			
-		 printf("\n");
-         printf("Transaction Received of size: %d\n", transaction_size);
-		 printf("\n");
+       printf("Transaction received of size: %d bytes.\n", transaction_size);
+		 print_separator();
 		 /*Pull out relevant info from client message*/
 		 //what action to perform
 		 int action_type = transaction[TRANSACTION_TYPE_INDEX];
@@ -168,11 +170,9 @@ int main(void) {
 				if(account_number == 1)
 				{
 					response_account_type = CHECKING;
-
 					printf("Accessing Account 1\n");
 					//for readability in stdout
-					print_separator();
-					printf("You have: %d remaining in your account\n", check_act.balance);
+					printf("Account 1 has $%d remaining in their account.\n", check_act.balance);
 					//for readability in stdout
 					print_separator();
 				}//if accessing account 1
@@ -181,10 +181,7 @@ int main(void) {
 					response_account_type = SAVINGS;
 					
 					printf("Accessing Account 2 \n");
-					//for readability
-					print_separator();
-					printf("You have: %d remaining in your account\n", save_act.balance);
-					//for readability
+					printf("Account 2 has $%d remaining in their account.\n", save_act.balance);
 					print_separator();
 				}//else if accessing account 2
 				else
@@ -195,7 +192,7 @@ int main(void) {
 				break;
 			//Deposit
 			case 1:
-				printf("Deposit request received for account: %d\n",
+				printf("Deposit request received for Account: %d\n",
 						account_number);
 				if(account_number == 1)
 				{
@@ -211,7 +208,7 @@ int main(void) {
 				    //after depositing, save off the post balance for response	
 					response_post_balance = check_act.balance;
 					//notify user
-					printf("You now have: %d remaining in your account\n", check_act.balance);
+					printf("Remaining Balance: $%d\n", check_act.balance);
 					print_separator();
 				}//if accessing account 1
 				
@@ -221,13 +218,13 @@ int main(void) {
 					response_account_type = SAVINGS;
 					//initial value
 					response_initial_balance = save_act.balance;
-					printf("Accessing Account 2 \n");
+					printf("Accessing Account 2\n");
 					print_separator();
 					save_act.balance += amount;//Add the amount specified in the transaction to the account
 					//post value
 					response_post_balance = save_act.balance;
 					//notfiy user
-					printf("You have: %d remaining in your account\n", save_act.balance);
+					printf("Remaining Balance: $%d\n", save_act.balance);
 					print_separator();
 				}//else if accessing account 2
 				
@@ -256,12 +253,12 @@ int main(void) {
 					}//if insufficient funds error 3
 					else
 					{
-						printf("Withdrawing %d from account %d\n", amount, account_number);
+						printf("Withdrawing $%d from Account %d.\n", amount, account_number);
 						check_act.balance -= amount;
 						//save post value
 						response_post_balance = check_act.balance;
 						//notfiy user
-						printf("New balance is %d\n", check_act.balance);
+						printf("New balance is $%d\n", check_act.balance);
 					}//else withdraw amount	
 				}//if accessing account 1
 
@@ -272,14 +269,15 @@ int main(void) {
 					//set error, no withdraw from savings
 					error_code = ERR_WITHDRAW_SAVINGS;
 				}
-				else{
+				else
+				{
 					error_code = ERR_ACCOUNT_NONEXIST;
 				}//else Error! no such account
 				
 				break;
 			//Transfer
 			case 3:
-				printf("Transfer request received from account: %d to account %d\n",
+				printf("Transfer request received from Account %d to Account %d\n",
 					  account_number, receiver_account_number);	
 				
 				if(account_number == 1)
@@ -298,13 +296,13 @@ int main(void) {
 					}//else if receiver does not exist
 					else
 					{
-						printf("Transferring %d to account %d\n", amount, receiver_account_number);
+						printf("Transferring $%d to Account %d\n", amount, receiver_account_number);
 						//take money from one account
 						check_act.balance -= amount;
 						//add money to other account
 						save_act.balance += amount;
 						//value after transferring
-						printf("New balances are-> Sender:%d , Receiver:%d\n", check_act.balance, save_act.balance);
+						printf("New balances are Sender: $%d, Receiver: $%d\n", check_act.balance, save_act.balance);
 						response_post_balance = save_act.balance;
 					}//else transfer funds!
 				}//if transfer from account 1
@@ -323,21 +321,20 @@ int main(void) {
 					}//else if receiver does not exist
 					else
 					{
-						printf("Transferring %d to account %d\n", amount, receiver_account_number);
+						printf("Transferring $%d to Account %d\n", amount, receiver_account_number);
 						//take money from one account
 						save_act.balance -= amount;
 						//add money to other account
 						check_act.balance += amount;
 						//value after transferring
 						response_post_balance = check_act.balance;
-						printf("New balances are-> Sender:%d , Receiver:%d\n", save_act.balance, check_act.balance);
+						printf("New balances are Sender:$%d , Receiver:$%d\n", save_act.balance, check_act.balance);
 					}//else transfer funds!
 				}//else if transfer from account 2
 				else
 				{
 					error_code = ERR_ACCOUNT_NONEXIST;
 				}
-
 				break;
 			//Error if you got this far..
 			default:
@@ -346,7 +343,7 @@ int main(void) {
 		 }
 
 			/* prepare the message to send */
-			msg_len = (NUM_VALUES_RESPONSE*sizeof(int)) + 1;
+			msg_len = NUM_VALUES_RESPONSE*sizeof(int);
 			/*consturct message*/
 			//add error code
 			response_message[ERROR_TYPE_INDEX] = error_code;
@@ -359,11 +356,8 @@ int main(void) {
 	
 			/* send message */
 			bytes_sent = send(sock_connection, response_message, msg_len, 0);
-			printf("\n");
-			printf("Sent response to client of size %d\n", bytes_sent);
+			printf("Sent response to client of size %d bytes.\n", bytes_sent);
 			print_response(response_message);
       }
-
-    } 
-	
+   } 
 }
