@@ -24,7 +24,7 @@ int main(void) {
    unsigned short server_port;  /* Port number used by server (remote port) */
 
    int transaction[NUM_VALUES_TRANSACTION];  /* send message */
-   int x; /* receive message */
+   int server_response[NUM_VALUES_RESPONSE]; /* receive message */
    unsigned int msg_len;  /* length of message */                      
    int bytes_sent, bytes_recd; /* number of bytes sent or received */
   
@@ -140,13 +140,13 @@ printf("Enter hostname of server: ");
 		int transaction_size = (NUM_VALUES_TRANSACTION * sizeof(int)) + 1;
 		bytes_sent = send(sock_client, transaction, transaction_size, 0);
 		printf("Number of Bytes Sent : %d bytes\n", transaction_size);
-
+		int rec_size = (NUM_VALUES_RESPONSE * sizeof(int)) +1;
 		/* get response from server */
-		bytes_recd = recv(sock_client, &x, 4, 0); 
+		bytes_recd = recv(sock_client, &server_response, rec_size, 0); 
 
 		printf("\nThe response from server is:\n");
-		printf("%d\n", x);
-		printf("Number of Bytes Received : %d bytes\n\n", sizeof(x));
+		printf("%d\n", server_response[0]);
+		printf("Number of Bytes Received : %d bytes\n\n", bytes_recd);
 
 		printf("Anything else you need to do today? (Y/N)\n");
 		printf("> ");

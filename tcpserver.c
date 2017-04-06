@@ -364,11 +364,19 @@ int main(void) {
 		 }
 
 			/* prepare the message to send */
-			msg_len = bytes_recd;
-
-			int j = 1;
+			msg_len = (NUM_VALUES_RESPONSE*sizeof(int)) + 1;
+			/*consturct message*/
+			//add error code
+			response_message[ERROR_TYPE_INDEX] = error_code;
+			//add account_type
+			response_message[R_ACCOUNT_TYPE_INDEX] = response_account_type;
+			//add initial balance
+			response_message[R_INITIAL_BALANCE_INDEX] = response_initial_balance;
+			//add post balance
+			response_message[R_POST_BALANCE_INDEX] = response_post_balance;					
+	
 			/* send message */
-			bytes_sent = send(sock_connection, &j, sizeof(j), 0);
+			bytes_sent = send(sock_connection, response_message, msg_len, 0);
       }
 
       /* close the socket */
