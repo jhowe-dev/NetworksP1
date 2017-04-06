@@ -86,3 +86,10 @@ void print_transaction(int transaction[NUM_VALUES_TRANSACTION])
 #define R_INITIAL_BALANCE_INDEX 2
 #define R_POST_BALANCE_INDEX 3
 
+
+/*Error codes:
+ * 1: Account does not exist -> specified number is not an existing account
+ * 2: Invalid request -> Specified request is not one of 0(inquiry) 1(deposit) 2(withdraw) 3(transfer)
+ * 3: Insufficient funds -> During a withdrawal or transfer, the account losing money does not have enough to complete transaction
+ * 4: Receiver doesn't exist -> Account number specified for the receiver of a transfer does not exist
+ * */
