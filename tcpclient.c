@@ -81,16 +81,6 @@ printf("Enter hostname of server: ");
 		printf("> ");
 		scanf("%d", &transaction[T_ACCOUNT_NUMBER_INDEX]);
 
-		//Get the account type
-		do
-		{
-			printf("Please enter in your account type.\n");	
-			printf("0 - Savings, 1 - Checking\n");	
-			printf("> ");
-			scanf("%d", &transaction[T_ACCOUNT_TYPE_INDEX]);
-		}
-		while(!(transaction[T_ACCOUNT_TYPE_INDEX] == 0 || transaction[T_ACCOUNT_TYPE_INDEX] == 1));
-
 		//Get the type of transaction
 		printf("What would you like to do today?\n");
 		printf("0 - Balance Inquiry, 1 - Deposit, 2 - Withdrawl, 3 - Transfer Funds\n");

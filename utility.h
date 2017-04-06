@@ -53,19 +53,17 @@ void print_separator()
  *		   receiver_number-> Integer representation of the unique account id of the account that will 
  *							 be transferred into (only in transfer actions)
  * */
-#define NUM_VALUES_TRANSACTION 5
+#define NUM_VALUES_TRANSACTION 4
 #define TRANSACTION_TYPE_INDEX 0
-#define T_ACCOUNT_TYPE_INDEX 1
-#define T_ACCOUNT_NUMBER_INDEX 2
-#define T_AMOUNT_INDEX 3
-#define T_RECEIVER_NUMBER_INDEX 4
+#define T_ACCOUNT_NUMBER_INDEX 1
+#define T_AMOUNT_INDEX 2
+#define T_RECEIVER_NUMBER_INDEX 3
 
 void print_transaction(int transaction[NUM_VALUES_TRANSACTION])
 {
 	printf("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
 	printf("Transaction Type : %d\n", transaction[TRANSACTION_TYPE_INDEX]);	
 	printf("Account Number : %d\n", transaction[T_ACCOUNT_NUMBER_INDEX]);	
-	printf("Account Type : %d\n", transaction[T_ACCOUNT_TYPE_INDEX]);	
 	printf("Amount : %d\n", transaction[T_AMOUNT_INDEX]);	
 	printf("Receiver Account Number : %d\n", transaction[T_RECEIVER_NUMBER_INDEX]);	
 	printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
