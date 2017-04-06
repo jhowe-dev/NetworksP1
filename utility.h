@@ -72,6 +72,7 @@ void print_transaction(int transaction[NUM_VALUES_TRANSACTION])
 }
 
 
+
 /*
  * Int Array: server_response
  * Fields: 
@@ -85,6 +86,17 @@ void print_transaction(int transaction[NUM_VALUES_TRANSACTION])
 #define R_ACCOUNT_TYPE_INDEX 1
 #define R_INITIAL_BALANCE_INDEX 2
 #define R_POST_BALANCE_INDEX 3
+
+//used to print the response sent by the server
+void print_response(int server_response[NUM_VALUES_RESPONSE])
+{
+	print_separator();
+	printf("Error code: %d \n", server_response[ERROR_TYPE_INDEX]);
+	printf("Account Type: %d \n", server_response[R_ACCOUNT_TYPE_INDEX]);
+	printf("Initial Balance: %d \n", server_response[R_INITIAL_BALANCE_INDEX]);
+	printf("Post Transaction Balance: %d \n", server_response[R_POST_BALANCE_INDEX]);
+	print_separator();
+}
 
 
 /*Error codes:

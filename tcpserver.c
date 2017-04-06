@@ -361,8 +361,9 @@ int main(void) {
 	
 			/* send message */
 			bytes_sent = send(sock_connection, response_message, msg_len, 0);
-
+			printf("\n");
 			printf("Sent response to client of size %d\n", bytes_sent);
+			print_response(response_message);
       }
 
       /* close the socket */
