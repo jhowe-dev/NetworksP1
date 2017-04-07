@@ -21,6 +21,7 @@ int main(void) {
    struct hostent * server_hp;      /* Structure to store server's IP
                                         address */
    char server_hostname[STRING_SIZE]; /* Server's hostname */
+	char y_n; /* stores yes/no response */
    unsigned short server_port;  /* Port number used by server (remote port) */
 
    int transaction[NUM_VALUES_TRANSACTION];  /* send message */
@@ -155,9 +156,9 @@ int main(void) {
 
 		printf("Would you like to perform another transaction without establishing another connection? (Y/N)\n");
 		printf("> ");
-		char y_n;
 		scanf("\n%s", &y_n);
 		repeat = (y_n == 'Y') || (y_n == 'y');
+	 } 
 
 		printf("Would you like to reconnect to the server and perform another transaction? (Y/N)\n");
 		printf("> ");
@@ -180,7 +181,6 @@ int main(void) {
 		}
 
 		print_separator();
-	 } 
 	} while(!if_disconnect);
 	/* close the socket */
    close(sock_client);
