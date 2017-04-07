@@ -170,6 +170,7 @@ int main(void) {
 				if(account_number == 1)
 				{
 					response_account_type = CHECKING;
+					response_initial_balance = check_act.balance;
 					printf("Accessing Account 1\n");
 					//for readability in stdout
 					printf("Account 1 has $%d remaining in their account.\n", check_act.balance);
@@ -179,7 +180,7 @@ int main(void) {
 				else if(account_number == 2)
 				{
 					response_account_type = SAVINGS;
-					
+					response_initial_balance = save_act.balance;	
 					printf("Accessing Account 2 \n");
 					printf("Account 2 has $%d remaining in their account.\n", save_act.balance);
 					print_separator();
