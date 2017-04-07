@@ -92,6 +92,7 @@ printf("Enter hostname of server: ");
 		{
 			case 0:
 				transaction[TRANSACTION_TYPE_INDEX] = CHECK;
+				transaction[T_AMOUNT_INDEX] = 0;
 			break;
 
 			case 1:
