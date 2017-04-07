@@ -27,8 +27,12 @@ int main(void) {
    int server_response[NUM_VALUES_RESPONSE]; /* receive message */
    unsigned int msg_len;  /* length of message */                      
    int bytes_sent, bytes_recd; /* number of bytes sent or received */
+	bool if_disconnect = false;
   
    /* open a socket */
+
+	do
+	{
 
    if ((sock_client = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
       perror("Client: can't open stream socket");
@@ -43,7 +47,7 @@ int main(void) {
             already been bound. */
 
    /* initialize server address information */
-printf("Enter hostname of server: ");
+	printf("Enter hostname of server: ");
    scanf("%s", server_hostname);
    if ((server_hp = gethostbyname(server_hostname)) == NULL) {
       perror("Client: invalid server hostname");
@@ -142,28 +146,42 @@ printf("Enter hostname of server: ");
 		if(server_response[ERROR_TYPE_INDEX] != 0)
 			print_error(server_response[ERROR_TYPE_INDEX], transaction);
 
-		printf("Anything else you need to do today? (Y/N)\n");
-		printf("> ");
-		char y_n;
-		scanf("\n%s", &y_n);
-		repeat = (y_n == 'Y') || (y_n == 'y');
-
-		if(!repeat)
-		{
-			printf("Goodbye!\n");
-			char goodbye[1];
-			goodbye[1] = 'g';
-			bytes_sent = send(sock_client, goodbye, sizeof(char), 0);
-		}
 		/*Set all values to 0's*/
 		transaction[0] = 0;
 		transaction[1] = 0;
 		transaction[2] = 0;
 		transaction[3] = 0;
 		transaction[4] = 0;
-		print_separator();
-	}
 
+		printf("Would you like to perform another transaction without establishing another connection? (Y/N)\n");
+		printf("> ");
+		char y_n;
+		scanf("\n%s", &y_n);
+		repeat = (y_n == 'Y') || (y_n == 'y');
+
+		printf("Would you like to reconnect to the server and perform another transaction? (Y/N)\n");
+		printf("> ");
+		scanf("\n%s", &y_n);
+		if_disconnect = (y_n == 'N') || (y_n == 'n');
+
+		if(if_disconnect)
+		{
+			printf("Goodbye!\n");
+			char goodbye[1];
+			goodbye[1] = 'g';
+			bytes_sent = send(sock_client, goodbye, sizeof(char), 0);
+		}
+		else
+		{
+			char goodbye[1];
+			goodbye[1] = 'g';
+			bytes_sent = send(sock_client, goodbye, sizeof(char), 0);
+			close(sock_client);
+		}
+
+		print_separator();
+	 } 
+	} while(!if_disconnect);
 	/* close the socket */
    close(sock_client);
 }
